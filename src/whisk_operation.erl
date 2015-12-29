@@ -1,3 +1,4 @@
+% @hidden
 -module(whisk_operation).
 -include("../include/whisk.hrl").
 
