@@ -64,9 +64,11 @@ delete(Key) ->
 %% gen_server Function Definitions
 %% ------------------------------------------------------------------
 
+% @hidden
 init([Host, Port]) ->
   gen_tcp:connect(Host, Port, ?TCP_OPTS).
 
+% @hidden
 handle_call(version, _From, Socket) ->
   Response = case send(Socket, whisk_operation:request(?OP_VERSION)) of
     {ok, Data} -> whisk_operation:response(Data);
@@ -110,17 +112,21 @@ handle_call({delete, Key}, _From, Socket) ->
 handle_call(_Request, _From, Socket) ->
   {reply, ok, Socket}.
 
+% @hidden
 handle_cast(stop, Socket) ->
   {stop, normal, Socket};
 handle_cast(_Msg, Socket) ->
   {noreply, Socket}.
 
+% @hidden
 handle_info(_Info, Socket) ->
   {noreply, Socket}.
 
+% @hidden
 terminate(_Reason, _Socket) ->
   ok.
 
+% @hidden
 code_change(_OldVsn, Socket, _Extra) ->
   {ok, Socket}.
 
