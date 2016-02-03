@@ -54,8 +54,9 @@ response(<<?RESPONSE,
            Size:32,
            0:32,
            0:64,
-           Version/binary>>) when size(Version) =:= Size ->
-  {ok, Version};
+           Version:Size/binary, 
+           Rest/binary>>) ->
+  {ok, {ok, Version}, Rest};
 % Stat
 response(<<?RESPONSE,
            ?OP_STAT,
@@ -67,8 +68,10 @@ response(<<?RESPONSE,
            0:32,
            0:64,
            Key:KeyLength/binary,
-           Value/binary>>) when size(Key) + size(Value) =:= Size ->
-  {ok, {Key, Value}};
+           Value/binary>>) when size(Key) + size(Value) >= Size ->
+  ValueLength = Size - KeyLength,
+  <<Value1:ValueLength/binary, Rest/binary>> = Value,
+  {ok, {ok, {Key, Value1}}, Rest};
 % Set
 response(<<?RESPONSE,
            ?OP_SET,
@@ -78,8 +81,9 @@ response(<<?RESPONSE,
            ?STATUS_NO_ERROR:16,
            0:32,
            0:32,
-           CAS:64>>) ->
-  {ok, CAS};
+           CAS:64,
+           Rest/binary>>) ->
+  {ok, {ok, CAS}, Rest};
 % Get
 response(<<?RESPONSE,
            ?OP_GET,
@@ -91,10 +95,12 @@ response(<<?RESPONSE,
            0:32,
            _:64,
            Flags:32,
-           Body/binary>>) when ExtraLength =:= 4, size(Body) =:= BodyLength - ExtraLength ->
+           Body/binary>>) when ExtraLength =:= 4, size(Body) >= BodyLength - ExtraLength ->
+  BodyLength1 = BodyLength - ExtraLength,
+  <<Body1:BodyLength1/binary, Rest/binary>> = Body,
   if
-    Flags =:= 1 -> {ok, binary_to_term(Body)};
-    true -> {ok, Body}
+    Flags =:= 1 -> {ok, {ok, binary_to_term(Body1)}, Rest};
+    true -> {ok, {ok, Body1}, Rest}
   end;
 % Delete
 response(<<?RESPONSE,
@@ -105,8 +111,9 @@ response(<<?RESPONSE,
            ?STATUS_NO_ERROR:16,
            0:32,
            0:32,
-           0:64>>) ->
-  ok;
+           0:64,
+           Rest/binary>>) ->
+  {ok, ok, Rest};
 % Error
 response(<<?RESPONSE,
            _,
@@ -116,17 +123,9 @@ response(<<?RESPONSE,
            Status:16,
            0:32,
            0:32,
-           _:64>>) when Status =/= ?STATUS_NO_ERROR ->
-  {error, Status};
-response(Data) when is_list(Data) ->
-  lists:foldl(fun
-                (D, {ok, Acc}) ->
-                  case response(D) of
-                    {ok, Response} -> {ok, [Response|Acc]};
-                    {error, E} -> {error, E}
-                  end;
-                (_, Acc) -> Acc
-              end, {ok, []}, Data);
+           _:64, 
+           Rest/binary>>) when Status =/= ?STATUS_NO_ERROR ->
+  {ok, {error, Status}, Rest};
 response(_) ->
-  {error, invalid_response}.
+  continue.
 
