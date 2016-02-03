@@ -16,7 +16,7 @@ Connect to a server.</td></tr><tr><td valign="top"><a href="#delete-1">delete/1<
 Delete a key/value pair.</td></tr><tr><td valign="top"><a href="#disconnect-0">disconnect/0</a></td><td>
 Disconnect from the server.</td></tr><tr><td valign="top"><a href="#get-1">get/1</a></td><td>
 Get the value associated with the key.</td></tr><tr><td valign="top"><a href="#set-2">set/2</a></td><td>Equivalent to <a href="#set-3"><tt>set(Key, Value, [{expiry, 0}, {cas, 0}])</tt></a>.</td></tr><tr><td valign="top"><a href="#set-3">set/3</a></td><td>
-Set the key-value pair.</td></tr><tr><td valign="top"><a href="#stat-0">stat/0</a></td><td></td></tr><tr><td valign="top"><a href="#stats-0">stats/0</a></td><td>
+Set the key-value pair.</td></tr><tr><td valign="top"><a href="#stat-0">stat/0</a></td><td>(<em>Deprecated</em>.) </td></tr><tr><td valign="top"><a href="#stats-0">stats/0</a></td><td>
 Collect the stats for the server.</td></tr><tr><td valign="top"><a href="#version-0">version/0</a></td><td>
 Version of the memcache server.</td></tr></table>
 
@@ -99,6 +99,8 @@ Set the key-value pair
 stat() -&gt; {ok, [{binary(), binary()}]}
 </code></pre>
 <br />
+
+__This function is deprecated:__ Please use [`whisk:stats/0`](whisk.md#stats-0)
 
 <a name="stats-0"></a>
 

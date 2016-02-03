@@ -60,7 +60,7 @@ disconnect() ->
 version() ->
   gen_server:call(?SERVER, version).
 
-% @deprecated
+% @deprecated Please use {@link whisk:stats/0}
 -spec stat() -> {ok, [{binary(), binary()}]}.
 stat() ->
   stats().
