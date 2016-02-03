@@ -13,11 +13,11 @@ request(Operation) ->
   request(Operation, []).
 
 request(Operation, Datas) ->
-  Extra = eutils:to_binary(elists:keyfind(extra, 1, Datas, <<>>)),
-  Key = eutils:to_binary(elists:keyfind(key, 1, Datas, <<>>)),
-  Value = eutils:to_binary(elists:keyfind(value, 1, Datas, <<>>)),
-  Opaque = elists:keyfind(opaque, 1, Datas, 0),
-  CAS = elists:keyfind(cas, 1, Datas, 0),
+  Extra = bucs:to_binary(buclists:keyfind(extra, 1, Datas, <<>>)),
+  Key = bucs:to_binary(buclists:keyfind(key, 1, Datas, <<>>)),
+  Value = bucs:to_binary(buclists:keyfind(value, 1, Datas, <<>>)),
+  Opaque = buclists:keyfind(opaque, 1, Datas, 0),
+  CAS = buclists:keyfind(cas, 1, Datas, 0),
   <<?REQUEST, 
     Operation, 
     (size(Key)):16, 
