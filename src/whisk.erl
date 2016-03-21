@@ -26,6 +26,7 @@
          version/1,
          stat/1,
          stats/1,
+         stats/2,
          set/3,
          set/4,
          get/2,
@@ -105,7 +106,12 @@ stat(Pid) ->
 % @end
 -spec stats(pid()) -> {ok, [{binary(), binary()}]} | {error, term()}.
 stats(Pid) ->
-  ?DO(Pid, gen_server:call(Pid, stat)).
+  ?DO(Pid, gen_server:call(Pid, {stat, []})).
+
+% @hidden 
+% Experimental
+stats(Pid, Extra) ->
+  ?DO(Pid, gen_server:call(Pid, {stat, Extra})).
 
 % @equiv set(Key, Value, [{expiry, 0}, {cas, 0}])
 -spec set(pid(), term(), term()) -> {ok, integer()} | {error, term()}.
@@ -160,8 +166,8 @@ handle_call({timeout, Timeout}, _From, Server) ->
 handle_call(version, _From, Server) ->
   {Response, Server1} = send(Server, whisk_operation:request(?OP_VERSION)),
   {reply, Response, Server1};
-handle_call(stat, _From, Server) ->
-  {Response, Server1} = send(multi, ?OP_STAT, Server, whisk_operation:request(?OP_STAT)),
+handle_call({stat, Key}, _From, Server) ->
+  {Response, Server1} = send(multi, ?OP_STAT, Server, whisk_operation:request(?OP_STAT, [{key, bucs:to_binary(Key)}])),
   {reply, Response, Server1};
 handle_call({set, Key, Value, Options}, _From, Server) ->
   Expiry = buclists:keyfind(expiry, 1, Options, 0),
@@ -275,7 +281,7 @@ flow_data(Operation, Data, Acc) ->
     true -> {stop, Acc};
     false -> 
       case whisk_operation:response(Data) of
-        {ok, Response, Rest} -> flow_data(Operation, Rest, [Response|Acc]);
+        {ok, {ok, Response}, Rest} -> flow_data(Operation, Rest, [Response|Acc]);
         _ -> {next, Data, Acc}
       end
   end.
