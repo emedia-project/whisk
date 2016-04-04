@@ -1,5 +1,12 @@
 PROJECT = whisk
 
+DEP_PLUGINS = mix.mk
+BUILD_DEPS = mix.mk
+ELIXIR_VERSION = ~> 1.2
+ELIXIR_BINDINGS = whisk
+
+dep_mix.mk = git https://github.com/botsunit/mix.mk.git master
+
 DEPS = bucs
 dep_bucs = git https://github.com/botsunit/bucs.git master
 
@@ -19,3 +26,4 @@ EDOC_OPTS = {doclet, edown_doclet} \
 dev: deps app
 	@erl -pa ebin include deps/*/ebin deps/*/include
 
+release: app mix.all
