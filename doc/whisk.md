@@ -11,7 +11,7 @@ __Behaviours:__ [`gen_server`](gen_server.md).
 ## Function Index ##
 
 
-<table width="100%" border="1" cellspacing="0" cellpadding="2" summary="function index"><tr><td valign="top"><a href="#connect-2">connect/2</a></td><td>
+<table width="100%" border="1" cellspacing="0" cellpadding="2" summary="function index"><tr><td valign="top"><a href="#connect-2">connect/2</a></td><td>Equivalent to <a href="#connect-3"><tt>connect(Host, Port, [])</tt></a>.</td></tr><tr><td valign="top"><a href="#connect-3">connect/3</a></td><td>
 Connect to a server.</td></tr><tr><td valign="top"><a href="#delete-2">delete/2</a></td><td>
 Delete a key/value pair.</td></tr><tr><td valign="top"><a href="#disconnect-1">disconnect/1</a></td><td>
 Disconnect from the server.</td></tr><tr><td valign="top"><a href="#get-2">get/2</a></td><td>
@@ -32,6 +32,17 @@ Version of the memcache server.</td></tr></table>
 
 <pre><code>
 connect(Host::string(), Port::integer()) -&gt; {ok, pid()} | {error, term()}
+</code></pre>
+<br />
+
+Equivalent to [`connect(Host, Port, [])`](#connect-3).
+
+<a name="connect-3"></a>
+
+### connect/3 ###
+
+<pre><code>
+connect(Host::string(), Port::integer(), Options::[{atom(), term()}]) -&gt; {ok, pid()} | {error, term()}
 </code></pre>
 <br />
 
