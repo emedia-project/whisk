@@ -16,7 +16,7 @@ defmodule Whisk.Mixfile do
 
   defp deps do
     [ 
-      {:bucs, ~r/.*/, git: "https://github.com/botsunit/bucs.git", tag: "0.0.1"},
+      {:bucs, ~r/.*/, git: "https://github.com/botsunit/bucs.git", branch: "master"},
     ]
   end
 end

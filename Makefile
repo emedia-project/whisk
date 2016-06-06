@@ -8,7 +8,7 @@ ELIXIR_BINDINGS = whisk
 dep_mix.mk = git https://github.com/botsunit/mix.mk.git master
 
 DEPS = bucs
-dep_bucs = git https://github.com/botsunit/bucs.git 0.0.1
+dep_bucs = git https://github.com/botsunit/bucs.git master
 
 DOC_DEPS = edown
 dep_edown = git https://github.com/uwiger/edown.git master
