@@ -10,3 +10,5 @@ _xrel
 *.d
 *.swp
 .erlang.mk
+_build/
+
