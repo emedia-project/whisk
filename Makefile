@@ -1,18 +1,18 @@
 .PHONY: doc
-REBAR = ./rebar3
+include bu.mk
 
 compile:
-	@$(REBAR) compile
+	$(verbose) $(REBAR) compile
 
 doc:
-	@$(REBAR) as doc edoc
+	$(verbose) $(REBAR) as doc edoc
 
 elixir:
-	@$(REBAR) elixir generate_mix
-	@$(REBAR) elixir generate_lib
+	$(verbose) $(REBAR) elixir generate_mix
+	$(verbose) $(REBAR) elixir generate_lib
 
 dist: compile elixir doc
 
 distclean:
-	@rm -rf _build rebar.lock mix.lock test/eunit
+	$(verbose) $(RM_RF) _build rebar.lock mix.lock test/eunit
 
