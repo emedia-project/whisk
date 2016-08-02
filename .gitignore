@@ -11,4 +11,5 @@ _xrel
 *.swp
 .erlang.mk
 _build/
+test/eunit/
 

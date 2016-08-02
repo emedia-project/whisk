@@ -7,9 +7,9 @@
                   ]).
 -define(TIMEOUT, 5000).
 -define(RECONNECT, false).
--record(server, {host, 
-                 port, 
-                 socket, 
+-record(server, {host,
+                 port,
+                 socket,
                  reconnect = ?RECONNECT,
                  timeout = ?TIMEOUT}).
 
@@ -33,7 +33,7 @@
          delete/2
         ]).
 
--define(DO(Pid, Fun), 
+-define(DO(Pid, Fun),
         if
           is_pid(Pid) ->
             case erlang:process_info(Pid) of
@@ -82,7 +82,7 @@ disconnect(Pid) ->
 % Set socker timeout
 % @end
 -spec timeout(pid, integer()) -> ok | {error, term()}.
-timeout(Pid, Timeout) -> 
+timeout(Pid, Timeout) ->
   if
     is_integer(Timeout) ->
       ?DO(Pid, gen_server:call(Pid, {timeout, Timeout}));
@@ -108,7 +108,7 @@ stat(Pid) ->
 stats(Pid) ->
   ?DO(Pid, gen_server:call(Pid, {stat, []})).
 
-% @hidden 
+% @hidden
 % Experimental
 stats(Pid, Extra) ->
   ?DO(Pid, gen_server:call(Pid, {stat, Extra})).
@@ -155,7 +155,7 @@ init([Host, Port, Options]) ->
                                  socket = Socket,
                                  reconnect = buclists:keyfind(reconnect, 1, Options, ?RECONNECT),
                                  timeout = buclists:keyfind(timeout, 1, Options, ?TIMEOUT)}};
-    {error, Reason} -> 
+    {error, Reason} ->
       {stop, Reason};
     _ -> {error, connection_faild}
   end.
@@ -220,8 +220,8 @@ send(Mode, Operation, #server{timeout = Timeout} = State, Request) ->
   case check_connection(State) of
     {ok, State1, Socket1} ->
       case gen_tcp:send(Socket1, Request) of
-        ok -> 
-          if 
+        ok ->
+          if
             Mode =:= multi -> {multi_recv(Timeout, Operation, <<>>, []), State1};
             true -> {simple_recv(Timeout, Operation, <<>>), State1}
           end;
@@ -231,10 +231,10 @@ send(Mode, Operation, #server{timeout = Timeout} = State, Request) ->
   end.
 
 check_connection(#server{socket = Socket, reconnect = Reconn, host = Host, port = Port} = State) ->
-  case erlang:port_info(Socket) of 
-    undefined -> 
+  case erlang:port_info(Socket) of
+    undefined ->
       if
-        Reconn -> 
+        Reconn ->
           case gen_tcp:connect(Host, Port, ?TCP_OPTS) of
             {ok, NewSocket} -> {ok, State#server{socket = NewSocket}, NewSocket};
             {error, Reason} -> {{error, Reason}, State}
@@ -256,7 +256,7 @@ simple_recv(Timeout, Operation, Acc) ->
       end;
     {error, E} ->
       {error, E}
-  after Timeout -> 
+  after Timeout ->
           {error, timeout}
   end.
 
@@ -265,7 +265,7 @@ multi_recv(Timeout, Operation, Acc, Resp) ->
     {tcp, _, Data} ->
       Data1 = <<Acc/binary, Data/binary>>,
       case flow_data(Operation, Data1, Resp) of
-        {stop, Resp1} -> 
+        {stop, Resp1} ->
           {ok, Resp1};
         {next, Rest, Resp1} ->
           multi_recv(Timeout, Operation, Rest, Resp1)
@@ -279,7 +279,7 @@ multi_recv(Timeout, Operation, Acc, Resp) ->
 flow_data(Operation, Data, Acc) ->
   case whisk_operation:is_end(Operation, Data) of
     true -> {stop, Acc};
-    false -> 
+    false ->
       case whisk_operation:response(Data) of
         {ok, {ok, Response}, Rest} -> flow_data(Operation, Rest, [Response|Acc]);
         _ -> {next, Data, Acc}

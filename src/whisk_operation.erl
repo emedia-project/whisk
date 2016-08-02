@@ -18,12 +18,12 @@ request(Operation, Datas) ->
   Value = bucs:to_binary(buclists:keyfind(value, 1, Datas, <<>>)),
   Opaque = buclists:keyfind(opaque, 1, Datas, 0),
   CAS = buclists:keyfind(cas, 1, Datas, 0),
-  <<?REQUEST, 
-    Operation, 
-    (size(Key)):16, 
-    (size(Extra)), 
-    0, 
-    0:16, 
+  <<?REQUEST,
+    Operation,
+    (size(Key)):16,
+    (size(Extra)),
+    0,
+    0:16,
     (size(Extra)+size(Key)+size(Value)):32,
     Opaque:32,
     CAS:64,
@@ -54,7 +54,7 @@ response(<<?RESPONSE,
            Size:32,
            0:32,
            0:64,
-           Version:Size/binary, 
+           Version:Size/binary,
            Rest/binary>>) ->
   {ok, {ok, Version}, Rest};
 % Stat
@@ -123,7 +123,7 @@ response(<<?RESPONSE,
            Status:16,
            0:32,
            0:32,
-           _:64, 
+           _:64,
            Rest/binary>>) when Status =/= ?STATUS_NO_ERROR ->
   {ok, {error, Status}, Rest};
 response(_) ->
